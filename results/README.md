@@ -1,0 +1,1 @@
+The generated word documents are stored in the folder `results`.

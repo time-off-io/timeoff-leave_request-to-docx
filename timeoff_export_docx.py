@@ -5,7 +5,7 @@ from base64 import b64encode
 from datetime import datetime
 from os import path
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Union
 
 import requests
 from docx import Document
@@ -26,7 +26,7 @@ def get_headers(config: dict) -> dict:
 
 
 def read_configuration() -> dict:
-    """Reads the configuration from the config.ini file and validates it"""
+    """Reads the configuration from the config.ini file and validates it."""
     # Read file
     config = configparser.ConfigParser()
     ini_path = Path(path.dirname(__file__), "config.ini")
@@ -75,8 +75,8 @@ def read_configuration() -> dict:
     return config
 
 
-def make_request(config: dict, url_path: str) -> list:
-    """Makes a request to the API and returns the response as a list"""
+def make_request(config: dict, url_path: str) -> Union[list, dict]:
+    """Makes a request to the API and returns the response as a list."""
     # Make the request
     url = f"{config['API']['api_base_url']}{url_path}"
     res = requests.get(url, headers=get_headers(config))
@@ -91,17 +91,17 @@ def make_request(config: dict, url_path: str) -> list:
 
 
 def fetch_leaves_types(config: dict) -> list:
-    """Fetches the leaves types from the API and returns them as a list"""
+    """Fetches the leaves types from the API and returns them as a list."""
     return make_request(config, "/mod-leaves/leave-type/")
 
 
 def fetch_employees(config: dict) -> list:
-    """Fetches the employees from the API and returns them as a list"""
+    """Fetches the employees from the API and returns them as a list."""
     return make_request(config, "/mod-personnel/employee/")
 
 
 def fetch_leaves(config: dict, employees: list, leaves_types: list) -> list:
-    """Fetches the leaves from the API and returns them as a list"""
+    """Fetches the leaves from the API and returns them as a list."""
     # Make the request
     leaves = make_request(config, "/mod-leaves/leave/")
 
@@ -125,7 +125,7 @@ def fetch_leaves(config: dict, employees: list, leaves_types: list) -> list:
 
 
 def str_upto(value: str, up_to: int, fill_with: str = " ") -> str:
-    """Returns a string with the length of up_to, filled with fill_with"""
+    """Returns a string with the length of up_to, filled with the value of fill_with variable."""
     if len(value) == up_to:
         return value
 
@@ -138,7 +138,7 @@ def str_upto(value: str, up_to: int, fill_with: str = " ") -> str:
 
 
 def build_table(leaves: list) -> None:
-    """Prints a table with the leaves"""
+    """Prints a table with the leaves."""
     index = 0
     leave_type_title = str_upto('Τύπος Άδειας', 40)
     leave_type_fill = str_upto('', 40, fill_with='-')
@@ -166,6 +166,7 @@ def build_table(leaves: list) -> None:
 
 
 def variables_to_replace(leave: dict, leave_got: dict, department_got: dict, config: dict) -> dict:
+    """Returns a dictionary with the variables to replace in the template file."""
     return {
         "${TODAY}": datetime.now().strftime(config["OUTPUT"]["date_format"]),
         "${FIRSTNAME}": leave["employee"]["firstName"],
@@ -183,6 +184,7 @@ def variables_to_replace(leave: dict, leave_got: dict, department_got: dict, con
 
 
 def export_file_path(variables: dict, config: dict) -> Optional[str]:
+    """Builds the filename based on the filename_pattern setting and returns the output file path for the document."""
     # The output file path pattern
     output_filename = config["OUTPUT"]["filename_pattern"]
 
@@ -196,12 +198,12 @@ def export_file_path(variables: dict, config: dict) -> Optional[str]:
     # Validate the generated filename
     if len(output_filename) > 255:
         print(f"ERROR: Το αρχείο δημιουργήθηκε αλλά το όνομα του αρχείου docx είναι πολύ μεγάλο. "
-              f"Αλλάξτε τη σχετική ρύθμιση του config.ini αρχείο!\n"
+              f"Αλλάξτε τη σχετική ρύθμιση του config.ini αρχείου!\n"
               f"Το όνομα του αρχείου είναι το: {output_filename}")
         return None
     if len(output_filename) == 0:
         print("ERROR: Το αρχείο δημιουργήθηκε αλλά το όνομα του αρχείου docx είναι κενό."
-              f"Αλλάξτε τη σχετική ρύθμιση του config.ini αρχείο!")
+              f"Αλλάξτε την σχετική ρύθμιση του config.ini αρχείου!")
         return None
 
     return str(Path(config["OUTPUT"]["output_dir"], f"{output_filename}.docx"))
@@ -212,8 +214,8 @@ def export_document(config: dict, leave: dict) -> Optional[str]:
     # Get the valid template file path
     filename = leave['leaveType']["remark"]
     if filename == "":
-        print(f"ERROR: Δεν έχετε ορίσει το όνομα το αρχείο για τον τύπο άδειας '{leave['leaveType']['title']}'. "
-              f"Θα πρέπει να συνδεθείτε στο app.timeoff.gr, να πάτε στο μενού 'Άδειες > Αιτήματα αδειών' και, με "
+        print(f"ERROR: Δεν έχετε ορίσει το όνομα του αρχείου για τον τύπο άδειας '{leave['leaveType']['title']}'. "
+              f"Θα πρέπει να συνδεθείτε στο app.timeoff.gr, να πάτε στο μενού 'Άδειες > Τύποι αδειών' και, με "
               f"επεξεργασία του σχετικού τύπου άδειας, να ορίσετε το όνομα του template αρχείου στο πεδίο 'Περιγραφή'.")
         return None
     template_file_path = str(Path(config["OUTPUT"]["template_dir"], filename))
@@ -239,8 +241,6 @@ def export_document(config: dict, leave: dict) -> Optional[str]:
                 for cell in row.cells:
                     for p in cell.paragraphs:
                         p.text = p.text.replace(key, variables[key])
-        for sh in doc.Shapes:
-            print(sh.Type)  # Type 17 is a textbox
 
     # Get the output file path
     output_file = export_file_path(variables, config)
@@ -283,7 +283,7 @@ def run() -> None:
         # Export the leave
         filepath = export_document(config, leaves[leave_no - 1])
         if filepath is not None:
-            print(f"Η δημιουργία του αρχείο ολοκληρώθηκε. Το αρχείο βρίσκεται στην παρακάτω διαδρομή:\n{filepath}\n")
+            print(f"Η δημιουργία του αρχείου ολοκληρώθηκε. Το αρχείο βρίσκεται στην παρακάτω διαδρομή:\n{filepath}\n")
 
 
 if __name__ == "__main__":

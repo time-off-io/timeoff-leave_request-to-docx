@@ -1,12 +1,12 @@
 ## What is this project?
 
-This project is a python project that consumes the API of www.timeoff.gr.
+This repository is a python project that consumes the API of www.timeoff.gr.
 
-The main functionality is to export documents from leave requests.
+The main functionality of the tool is to export documents from leave requests.
 
 ## How to install
 
-This is a python project, and it is installed as follows:
+This is a python project, and it's installed as follows:
 
 1. Download the project from GitHub
 2. Store the project in a folder
@@ -18,7 +18,7 @@ pip install -r requirements.txt
 
 ## How to run
 
-The project is run as follows:
+The project is runs as follows:
 
 ```bash
 python timeoff_export_docx.py
@@ -28,7 +28,7 @@ python timeoff_export_docx.py
 
 ### Configure the project
 
-The configuration of the project is done in the file `config.ini`. The file is a standard INI file, and it is self-explanatory.
+The configuration of the project is done via the file `config.ini`. The file is a standard INI file, and it is self-explanatory.
 
 ### Configure the template word documents
 
