@@ -30,7 +30,7 @@ def read_configuration() -> dict:
     # Read file
     config = configparser.ConfigParser()
     ini_path = Path(path.dirname(__file__), "config.ini")
-    config.read(ini_path)
+    config.read(ini_path, encoding="utf8")
 
     # Validate API values
     if config["API"]["api_base_url"] is None:
