@@ -115,6 +115,7 @@ def fetch_leaves(config: dict, employees: list, leaves_types: list) -> list:
         leave["employee"] = [x for x in employees if x["id"] == leave["employeeId"]][0]
         leave["leaveType"] = [x for x in leaves_types if x["id"] == leave["leaveTypeId"]][0]
         leave["requestDate"] = datetime.strptime(leave["requestDate"], "%d.%m.%Y")
+        leave["protocolNo"] = leave["authLevel1_reason"] if "authLevel1_reason" in leave else "-"
         leave["startDate"] = datetime.strptime(leave["startDate"], "%d.%m.%Y")
         leave["endDate"] = datetime.strptime(leave["endDate"], "%d.%m.%Y")
 
@@ -147,7 +148,7 @@ def build_table(leaves: list) -> None:
     print("Αιτήματα άδειας")
     print(str_upto("", 136, "-"))
     print(
-        f"A/A  | Ημερομηνία Αίτησης | {leave_type_title} | Ημ/νία Έναρξης | Ημ/νία Λήξης | Κατάσταση | Επώνυμο/Όνομα")
+        f"A/A  | Αριθμ. Πρωτοκόλλου | {leave_type_title} | Ημ/νία Έναρξης | Ημ/νία Λήξης | Κατάσταση | Επώνυμο/Όνομα")
     print(
         f"-----|--------------------|-{leave_type_fill}-|----------------|--------------|-----------|---------------")
 
@@ -155,7 +156,7 @@ def build_table(leaves: list) -> None:
     for leave in leaves:
         index += 1
         print(f" {str(index) + ' ' if index < 10 else str(index)}  |"
-              f" {leave['requestDate'].strftime('%d.%m.%Y')}         |"
+              f" {str_upto(leave['protocolNo'], 18)} |"
               f" {str_upto(leave['leaveType']['title'], 40)} |"
               f" {leave['startDate'].strftime('%d.%m.%Y')}     |"
               f" {leave['endDate'].strftime('%d.%m.%Y')}   |"
