@@ -119,8 +119,8 @@ def fetch_leaves(config: dict, employees: list, leaves_types: list) -> list:
         leave["startDate"] = datetime.strptime(leave["startDate"], "%d.%m.%Y")
         leave["endDate"] = datetime.strptime(leave["endDate"], "%d.%m.%Y")
 
-    # Sort the leaves by requestDate
-    leaves.sort(key=lambda x: x["requestDate"], reverse=True)
+    # Sort the leaves by startDate
+    leaves.sort(key=lambda x: x["startDate"], reverse=True)
 
     return leaves
 
