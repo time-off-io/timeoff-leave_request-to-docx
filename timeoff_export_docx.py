@@ -300,7 +300,7 @@ def build_table(leaves: list) -> None:
     for leave in leaves:
         index += 1
         print(f" {str(index) + ' ' if index < 10 else str(index)}  |"
-              f" {str_upto(leave['protocolNo'], 18)} |"
+              f" {str_upto(leave['protocolNo'].strip(), 18)} |"
               f" {str_upto(leave['leaveType']['title'], 40)} |"
               f" {leave['startDate'].strftime('%d.%m.%Y')}     |"
               f" {leave['endDate'].strftime('%d.%m.%Y')}   |"
@@ -376,19 +376,19 @@ def export_document(config: dict, leave: dict) -> Optional[str]:
     variables = variables_to_replace(leave, leave_got, department_got, config)
 
     # Replace the placeholders with the variables values
-    wordreplace = WordReplace(template_file_path)
-    wordreplace.header_content(variables)
-    wordreplace.header_tables(variables)
-    wordreplace.body_content(variables)
-    wordreplace.body_tables(variables)
-    wordreplace.footer_content(variables)
-    wordreplace.footer_tables(variables)
+    word_replace = WordReplace(template_file_path)
+    word_replace.header_content(variables)
+    word_replace.header_tables(variables)
+    word_replace.body_content(variables)
+    word_replace.body_tables(variables)
+    word_replace.footer_content(variables)
+    word_replace.footer_tables(variables)
 
     # Get the output file path
     output_file = export_file_path(variables, config)
 
     # Save the document
-    wordreplace.docx.save(output_file)
+    word_replace.docx.save(output_file)
 
     return output_file
 
