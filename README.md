@@ -32,10 +32,11 @@ The configuration of the project is done via the file `config.ini`. The file is 
 
 ### Configure the template word documents
 
-- The template word documents should be stored in the folder `templates`.
+- The template word documents should be stored in the folder `templates`. Depending on the status of employment they should be placed either in directory `templates/permanent` or `templates/temporary`.
+- Templates for the same leave type should always have the same filename.
 - The template word documents must be `.docx` files, not `.doc` files.
 - Each of the template documents should be related to a specific leave type.
-- The name of the template document should be the set on the field 'Description', of the related leave type, in `timeoff.gr` application.
+- The name of the template document should be the one set on the field 'Description', of the related leave type, in `timeoff.gr` application.
 - The tool will replace the following placeholders in the template documents:
   - `${TODAY}`: The current date, in the format specified in the configuration file with the key `date_format`
   - `${FIRSTNAME}`: The first name of the employee

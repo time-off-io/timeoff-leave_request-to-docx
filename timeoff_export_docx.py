@@ -363,7 +363,8 @@ def export_document(config: dict, leave: dict) -> Optional[str]:
               f"Θα πρέπει να συνδεθείτε στο app.timeoff.gr, να πάτε στο μενού 'Άδειες > Τύποι αδειών' και, με "
               f"επεξεργασία του σχετικού τύπου άδειας, να ορίσετε το όνομα του template αρχείου στο πεδίο 'Περιγραφή'.")
         return None
-    template_file_path = str(Path(config["OUTPUT"]["template_dir"], filename))
+    employment_status = leave["employee"]["vatNo"]
+    template_file_path = str(Path(config["OUTPUT"]["template_dir"] + employment_status, filename))
     if not os.path.isfile(template_file_path):
         print(f"ERROR: Template file {template_file_path} does not exist!")
         return None
