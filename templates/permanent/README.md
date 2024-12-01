@@ -1,0 +1,2 @@
+You should place here any templates you want to use in the project, for staff having value "permanent" in the `vat` field.
+Templates must be `.docx` files, not `.doc` files.
