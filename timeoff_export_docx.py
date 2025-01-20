@@ -264,15 +264,16 @@ def fetch_leaves(config: dict, employees: list, leaves_types: list) -> list:
         leave["endDate"] = datetime.strptime(leave["endDate"], "%d.%m.%Y")
 
         # Find the protocol number
-        protocol_numbers = []
-        protocol_numbers.append(leave["remark"])
-        protocol_numbers.append(leave["authLevel1_reason"] if "authLevel1_reason" in leave else "")
-        protocol_numbers.append(leave["authLevel2_reason"] if "authLevel2_reason" in leave else "")
-        for p in protocol_numbers:
-            # Add the first found, which must be a number
-            if re.search(r"\d+", p):
-                leave["protocolNo"] = re.search(r"\d+", p).group()
-                break
+        # protocol_numbers = []
+        # protocol_numbers.append(leave["remark"])
+        # protocol_numbers.append(leave["authLevel1_reason"] if "authLevel1_reason" in leave else "")
+        # protocol_numbers.append(leave["authLevel2_reason"] if "authLevel2_reason" in leave else "")
+        # for p in protocol_numbers:
+        #     # Add the first found, which must be a number
+        #     if re.search(r"\d+", p):
+        #         leave["protocolNo"] = re.search(r"\d+", p).group()
+        #         break
+        leave["protocolNo"] = leave["authLevel2_reason"] if "authLevel2_reason" in leave else "-"
 
     # Sort the leaves by startDate
     leaves.sort(key=lambda x: x["startDate"], reverse=True)
